@@ -60,7 +60,7 @@ class _module_function_backward(torch.autograd.Function):
 		ctx.ctx_fwd = ctx_fwd
 		ctx.save_for_backward(input, params, doutput)
 		with torch.no_grad():
-			scaled_grad = doutput * ctx_fwd.loss_scale
+			scaled_grad = doutput.contiguous() * ctx_fwd.loss_scale
 			input_grad, weight_grad = ctx_fwd.native_tcnn_module.bwd(ctx_fwd.native_ctx, input, params, output, scaled_grad)
 			input_grad = None if input_grad is None else (input_grad / ctx_fwd.loss_scale)
 			weight_grad = None if weight_grad is None else (weight_grad / ctx_fwd.loss_scale)
